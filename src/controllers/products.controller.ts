@@ -10,12 +10,13 @@ import {
   HttpStatus,
   HttpCode,
   Res,
-  ParseIntPipe,
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { ParseIntPipe } from 'src/commom/parse-int.pipe';
 
 import { ProductsService } from '../services/products.service';
+import { CreateProductDto, UpdateProductDto } from '../dtos/products.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -48,12 +49,15 @@ export class ProductsController {
   }
 
   @Post()
-  createProduct(@Body() payload: any) {
+  createProduct(@Body() payload: CreateProductDto) {
     return this.productsService.createProduct(payload);
   }
 
   @Put(':id')
-  updateProduct(@Param('id', ParseIntPipe) id: number, @Body() payload: any) {
+  updateProduct(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateProductDto,
+  ) {
     return this.productsService.updateProduct(id, payload);
   }
 
