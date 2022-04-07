@@ -2,9 +2,16 @@ import { Injectable, Inject } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  constructor(@Inject('API_KEY') private apikey: string) {}
+  constructor(
+    /* Usamos @Inject para importar Values y factories que no sean clases. */
+    @Inject('API_KEY') private apiKey: string,
+    @Inject('TASK') private tasks: any[],
+  ) {}
 
-  getHello(): string {
-    return `Hell World! ${this.apikey}`;
+  getHello() {
+    return {
+      message: this.apiKey,
+      tasks: this.tasks,
+    };
   }
 }
