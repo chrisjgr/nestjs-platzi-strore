@@ -2,11 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dtos/user.dto';
+import { Order } from '../entities/order.entity';
+
+import { ProductsService } from '../../products/services/products.service';
 
 @Injectable()
 export class UserService {
   private _counterId = 1;
   private users: User[] = [];
+
+  constructor(private productsService: ProductsService) {}
 
   createUser(user: CreateUserDto) {
     this._counterId += 1;
@@ -15,5 +20,14 @@ export class UserService {
     this.users = [...this.users, newUser];
 
     return newUser;
+  }
+
+  getOrdersByUSer(id_: number): Order {
+    const user = this.users.find((u) => u.id === id_);
+    return {
+      date: new Date(),
+      user,
+      products: this.productsService.findAll(),
+    };
   }
 }
