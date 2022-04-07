@@ -11,12 +11,14 @@ import { firstValueFrom } from 'rxjs';
 import { DatabaseModule } from './database/database.module';
 
 import { enviroments } from './enviroments';
+import config from './config';
 
 @Module({
   imports: [
     /* Importamos ConfigModue y realizamos configuracion inicial. */
     ConfigModule.forRoot({
-      envFilePath: enviroments[process.env.NODE_ENV] || '.env', // archivos env
+      envFilePath: enviroments[process.env.NODE_ENV] || ['.env'], // archivos env
+      load: [config], // archivos de configuracion
       isGlobal: true, // acceso de la configuracion global
     }),
     HttpModule,
