@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HttpModule, HttpService } from '@nestjs/axios';
+import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,7 +11,17 @@ import { firstValueFrom } from 'rxjs';
 import { DatabaseModule } from './database/database.module';
 
 @Module({
-  imports: [UsersModule, ProductsModule, HttpModule, DatabaseModule],
+  imports: [
+    /* Importamos ConfigModue y realizamos configuracion inicial. */
+    ConfigModule.forRoot({
+      envFilePath: ['.env'], // archivos env
+      isGlobal: true, // acceso de la configuracion global
+    }),
+    HttpModule,
+    UsersModule,
+    ProductsModule,
+    DatabaseModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
