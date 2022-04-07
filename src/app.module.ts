@@ -10,11 +10,13 @@ import { ProductsModule } from './products/products.module';
 import { firstValueFrom } from 'rxjs';
 import { DatabaseModule } from './database/database.module';
 
+import { enviroments } from './enviroments';
+
 @Module({
   imports: [
     /* Importamos ConfigModue y realizamos configuracion inicial. */
     ConfigModule.forRoot({
-      envFilePath: ['.env'], // archivos env
+      envFilePath: enviroments[process.env.NODE_ENV] || '.env', // archivos env
       isGlobal: true, // acceso de la configuracion global
     }),
     HttpModule,
