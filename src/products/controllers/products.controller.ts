@@ -12,7 +12,6 @@ import {
   Res,
 } from '@nestjs/common';
 
-import { Response } from 'express';
 import { ParseIntPipe } from 'src/commom/parse-int.pipe';
 
 import { ProductsService } from '../services/products.service';
