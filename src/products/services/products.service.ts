@@ -1,27 +1,32 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import { Product } from '../entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dto';
+import { log } from 'console';
 
 @Injectable()
 export class ProductsService {
-  private _counterId = 1;
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Product 1',
-      description: 'bla bla bla',
-      price: 100,
-      stock: 100,
-      image: '',
-    },
-  ];
+  constructor(
+    @InjectModel(Product.name) private productModel: Model<Product>,
+  ) {}
 
-  findAll(): Product[] {
-    return this.products;
+  async findAll() {
+    try {
+      return this.productModel.find().exec();
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Error while fetching products');
+    }
   }
 
-  findOne(id: number) {
-    const product = this.products.find((item) => item.id == id);
+  async findOne(id: string) {
+    const product = await this.productModel.findById(id).exec();
 
     if (!product) {
       throw new NotFoundException(`Product with id ${id} not found`);
@@ -30,7 +35,7 @@ export class ProductsService {
     return product;
   }
 
-  createProduct(product: CreateProductDto) {
+  /* createProduct(product: CreateProductDto) {
     this._counterId += 1;
     const newProduct = {
       id: this._counterId,
@@ -59,5 +64,5 @@ export class ProductsService {
     const newProducts = this.products.filter((product) => product.id !== id);
     this.products = newProducts;
     return this.products;
-  }
+  } */
 }

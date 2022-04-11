@@ -22,12 +22,12 @@ export class UserService {
     return newUser;
   }
 
-  getOrdersByUSer(id_: number): Order {
+  async getOrdersByUSer(id_: number) {
     const user = this.users.find((u) => u.id === id_);
     return {
       date: new Date(),
       user,
-      products: this.productsService.findAll(),
+      products: await this.productsService.findAll(),
     };
   }
 }
