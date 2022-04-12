@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, FilterQuery } from 'mongoose';
 
 import { Product } from '../entities/product.entity';
 import {
@@ -12,7 +12,6 @@ import {
   FilterProductsDTO,
   UpdateProductDto,
 } from '../dtos/products.dto';
-import { log } from 'console';
 
 @Injectable()
 export class ProductsService {
@@ -20,11 +19,19 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
+  /* Ejemplo de filtrado en mongoDB */
   async findAll(params?: FilterProductsDTO) {
     if (params) {
+      const filters: FilterQuery<Product> = {};
       const { limit, offset } = params;
+      const { minPrice, maxPrice } = params;
+
+      if (minPrice && maxPrice) {
+        /* gte = mayor o ifual que  lte = menor o igual que */
+        filters.price = { $gte: minPrice, $lte: maxPrice };
+      }
       const products = await this.productModel
-        .find()
+        .find(filters)
         .skip(offset * limit)
         .limit(limit)
         .exec();
