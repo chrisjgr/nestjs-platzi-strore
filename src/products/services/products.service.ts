@@ -7,7 +7,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Product } from '../entities/product.entity';
-import { CreateProductDto, UpdateProductDto } from '../dtos/products.dto';
+import {
+  CreateProductDto,
+  FilterProductsDTO,
+  UpdateProductDto,
+} from '../dtos/products.dto';
 import { log } from 'console';
 
 @Injectable()
@@ -16,13 +20,19 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async findAll() {
-    try {
-      return this.productModel.find().exec();
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException('Error while fetching products');
+  async findAll(params?: FilterProductsDTO) {
+    if (params) {
+      const { limit, offset } = params;
+      const products = await this.productModel
+        .find()
+        .skip(offset * limit)
+        .limit(limit)
+        .exec();
+
+      return products;
     }
+
+    return await this.productModel.find().exec();
   }
 
   async findOne(id: string) {
