@@ -44,28 +44,21 @@ export class ProductsController {
   @Get(':id')
   @HttpCode(HttpStatus.ACCEPTED)
   getProduct(@Param('id') id: string) {
-    /*   response.status(200).send({
-      message: `product ${id}`,
-    }); */
-
     return this.productsService.findOne(id);
   }
 
-  /* @Post()
+  @Post()
   createProduct(@Body() payload: CreateProductDto) {
     return this.productsService.createProduct(payload);
   }
 
   @Put(':id')
-  updateProduct(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() payload: UpdateProductDto,
-  ) {
+  updateProduct(@Param('id') id: string, @Body() payload: UpdateProductDto) {
     return this.productsService.updateProduct(id, payload);
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id', ParseIntPipe) id: number) {
+  deleteProduct(@Param('id') id: string) {
     return this.productsService.deleteProduct(id);
-  } */
+  }
 }

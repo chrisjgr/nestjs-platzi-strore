@@ -35,34 +35,31 @@ export class ProductsService {
     return product;
   }
 
-  /* createProduct(product: CreateProductDto) {
-    this._counterId += 1;
-    const newProduct = {
-      id: this._counterId,
-      ...product,
-    };
-    this.products.push(newProduct);
-    return newProduct;
+  async createProduct(product: CreateProductDto) {
+    const newProduct = new this.productModel(product);
+
+    return await newProduct.save();
   }
 
-  updateProduct(id: number, newProduct: UpdateProductDto) {
-    const newProducts = this.products.map((product) =>
-      product.id === id ? { ...product, ...newProduct } : product,
-    );
-
-    this.products = newProducts;
-    return newProduct;
-  }
-
-  deleteProduct(id: number) {
-    const product = this.products.find((item) => item.id == id);
+  async updateProduct(id: string, changes: UpdateProductDto) {
+    const product = await this.productModel
+      .findByIdAndUpdate(id, { $set: changes }, { new: true })
+      .exec();
 
     if (!product) {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
 
-    const newProducts = this.products.filter((product) => product.id !== id);
-    this.products = newProducts;
-    return this.products;
-  } */
+    return product;
+  }
+
+  async deleteProduct(id: string) {
+    const product = await this.productModel.findByIdAndDelete(id).exec();
+    console.log(product);
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+
+    return product;
+  }
 }
