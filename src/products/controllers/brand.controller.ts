@@ -14,7 +14,7 @@ import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import { CreateBrandDto, UpdateBrandDto } from '../dtos/band.dto';
 import { BrandService } from '../services/brand.service';
 @ApiTags('brands')
-@Controller('brand')
+@Controller('brands')
 export class BrandController {
   constructor(private brandService: BrandService) {}
 

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
@@ -24,10 +28,18 @@ export class BrandService {
     return brand;
   }
 
-  async createBrand(brand: CreateBrandDto) {
-    const newBrand = new this.brandModel(brand);
+  async createBrand(payload: CreateBrandDto) {
+    try {
+      const newBrand = new this.brandModel(payload);
 
-    return await newBrand.save();
+      return await newBrand.save();
+    } catch (error) {
+      if (error.keyPattern.name) {
+        throw new BadRequestException(
+          `Brand with name ${payload.name} already exists`,
+        );
+      }
+    }
   }
 
   async updateBrand(id: string, changes: UpdateBrandDto) {
