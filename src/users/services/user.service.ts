@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { Model } from 'mongoose';
 
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dtos/user.dto';
@@ -8,26 +11,44 @@ import { ProductsService } from '../../products/services/products.service';
 
 @Injectable()
 export class UserService {
-  private _counterId = 1;
-  private users: User[] = [];
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  constructor(private productsService: ProductsService) {}
+  async getUser(id) {
+    const user = await this.userModel.findById(id);
 
-  createUser(user: CreateUserDto) {
-    this._counterId += 1;
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
 
-    const newUser = { id: this._counterId, ...user };
-    this.users = [...this.users, newUser];
-
-    return newUser;
+    return user;
   }
 
-  async getOrdersByUSer(id_: number) {
-    const user = this.users.find((u) => u.id === id_);
-    return {
-      date: new Date(),
-      user,
-      products: await this.productsService.findAll(),
-    };
+  async createUser(user: CreateUserDto) {
+    const newUser = new this.userModel(user);
+
+    return await newUser.save();
+  }
+
+  async updateUser(id, user: CreateUserDto) {
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      { $set: user },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    return updatedUser;
+  }
+
+  async deleteUser(id) {
+    const deletedUser = await this.userModel.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    return deletedUser;
   }
 }
