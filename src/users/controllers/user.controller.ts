@@ -11,7 +11,9 @@ import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dtos/user.dto';
 import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}

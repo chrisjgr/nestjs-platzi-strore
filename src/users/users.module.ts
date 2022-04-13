@@ -9,6 +9,7 @@ import { CustomersService } from './services/customers.service';
 
 import { ProductsModule } from '../products/products.module';
 import { User, UserSchema } from './entities/user.entity';
+import { Customer, CustomerSechema } from './entities/customer.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,10 @@ import { User, UserSchema } from './entities/user.entity';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Customer.name,
+        schema: CustomerSechema,
       },
     ]),
   ],

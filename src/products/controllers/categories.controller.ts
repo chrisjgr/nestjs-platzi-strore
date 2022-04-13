@@ -7,10 +7,11 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import { CreateCategoryDto } from '../dtos/categories.dto';
 import { CategoriesService } from '../services/categories.service';
-
+@ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private categoryService: CategoriesService) {}
