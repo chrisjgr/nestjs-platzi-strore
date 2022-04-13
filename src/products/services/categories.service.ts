@@ -1,47 +1,49 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { Model } from 'mongoose';
 
 import { Category } from '../entities/category.entity';
 import { UpdateCategoryDto, CreateCategoryDto } from '../dtos/categories.dto';
 
 @Injectable()
 export class CategoriesService {
-  _counterId = 1;
-  categories: Category[] = [];
+  constructor(
+    @InjectModel(Category.name) private categoryModel: Model<Category>,
+  ) {}
 
-  createCategory(category: CreateCategoryDto) {
-    this._counterId += 1;
-    const newCategory = { id: this._counterId, ...category };
-    this.categories = [...this.categories, newCategory];
+  async getCategories() {
+    return await this.categoryModel.find().exec();
   }
 
-  updateCategory(id: number, category: UpdateCategoryDto) {
-    const index = this.categories.findIndex((c) => c.id === id);
+  async getCategory(id: number) {
+    const category = await this.categoryModel.findById(id).exec();
 
-    if (!index) {
+    if (!category) {
       throw new NotFoundException(`Category with id ${id} not found`);
     }
 
-    this.categories[index] = { ...this.categories[index], ...category };
-    return this.categories[index];
+    return category;
+  }
+
+  async createCategory(category: CreateCategoryDto) {
+    const newCategory = new this.categoryModel(category);
+
+    return await newCategory.save();
+  }
+
+  updateCategory(id: number, changes: UpdateCategoryDto) {
+    const category = this.categoryModel.findByIdAndUpdate(id, changes, {
+      new: true,
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Category with id ${id} not found`);
+    }
   }
 
   deleteCategory(id: number) {
-    const index = this.categories.findIndex((c) => c.id === id);
-
-    if (!index) {
-      throw new NotFoundException(`Category with id ${id} not found`);
-    }
-
-    const newCategories = this.categories.filter((c) => c.id !== id);
-    this.categories = [...newCategories];
-  }
-
-  getCategories() {
-    return this.categories;
-  }
-
-  getCategory(id: number) {
-    const category = this.categories.find((c) => c.id === id);
+    const category = this.categoryModel.findByIdAndDelete(id).exec();
 
     if (!category) {
       throw new NotFoundException(`Category with id ${id} not found`);
