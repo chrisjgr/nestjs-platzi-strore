@@ -16,7 +16,7 @@ export class CategoriesService {
     return await this.categoryModel.find().exec();
   }
 
-  async getCategory(id: number) {
+  async getCategory(id: string) {
     const category = await this.categoryModel.findById(id).exec();
 
     if (!category) {
@@ -32,7 +32,7 @@ export class CategoriesService {
     return await newCategory.save();
   }
 
-  updateCategory(id: number, changes: UpdateCategoryDto) {
+  updateCategory(id: string, changes: UpdateCategoryDto) {
     const category = this.categoryModel.findByIdAndUpdate(id, changes, {
       new: true,
     });
@@ -42,7 +42,7 @@ export class CategoriesService {
     }
   }
 
-  deleteCategory(id: number) {
+  deleteCategory(id: string) {
     const category = this.categoryModel.findByIdAndDelete(id).exec();
 
     if (!category) {

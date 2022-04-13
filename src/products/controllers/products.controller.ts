@@ -26,9 +26,7 @@ import {
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {
-    console.log('ProductsController');
-  }
+  constructor(private productsService: ProductsService) {}
 
   @Get()
   @ApiOperation({ summary: 'List of products' })
