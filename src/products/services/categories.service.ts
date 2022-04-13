@@ -33,9 +33,13 @@ export class CategoriesService {
   }
 
   updateCategory(id: string, changes: UpdateCategoryDto) {
-    const category = this.categoryModel.findByIdAndUpdate(id, changes, {
-      new: true,
-    });
+    const category = this.categoryModel.findByIdAndUpdate(
+      id,
+      { $set: changes },
+      {
+        new: true,
+      },
+    );
 
     if (!category) {
       throw new NotFoundException(`Category with id ${id} not found`);
