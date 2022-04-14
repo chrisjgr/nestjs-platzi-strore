@@ -1,20 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { Order } from '../entities/order.entity';
-import { CreateOrderDto } from '../dtos/orders.dto';
+import { Order } from '../../users/entities/order.entity';
+import { CreateOrderDto } from '../../users/dtos/orders.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(@InjectModel(Order.name) private orderModel: Model<Order>) {}
 
   async getOrders() {
-    return await this.orderModel.find().exec();
+    return await this.orderModel
+      .find()
+      .populate('customer')
+      .populate('products')
+      .exec();
   }
 
   async getOrder(id: string) {
-    const order = await this.orderModel.findById(id).exec();
+    const order = await this.orderModel
+      .findById(id)
+      .populate('customer')
+      .populate('products')
+      .exec();
 
     if (!order) {
       throw new NotFoundException(`Order with id ${id} not found`);
@@ -24,9 +37,17 @@ export class OrdersService {
   }
 
   async createOrder(order: CreateOrderDto) {
-    const newOrder = new this.orderModel(order);
+    try {
+      const newOrder = new this.orderModel(order);
 
-    return await newOrder.save();
+      return await newOrder.save();
+    } catch (error) {
+      if (error.name === 'ValidationError' && error.errors) {
+        throw new BadRequestException(error.message);
+      }
+
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async updateOrder(id: string, changes: CreateOrderDto) {
