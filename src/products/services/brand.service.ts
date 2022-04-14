@@ -24,6 +24,7 @@ export class BrandService {
     if (!brand) {
       throw new NotFoundException(`Brand with id ${id} not found`);
     }
+    
 
     return brand;
   }
