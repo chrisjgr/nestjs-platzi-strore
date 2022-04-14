@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
-import { CreateOrderDto } from '../dtos/orders.dto';
+import { CreateOrderDto, UpdateProductsByOrderDto } from '../dtos/orders.dto';
 import { OrdersService } from '../services/orders.service';
 
 @Controller('orders')
@@ -39,8 +39,24 @@ export class OrdersController {
     return this.orderService.updateOrder(id, payload);
   }
 
+  @Put(':id/products')
+  updateProducts(
+    @Param('id', MongoIdPipe) id: string,
+    @Body() payload: UpdateProductsByOrderDto,
+  ) {
+    return this.orderService.addProducts(id, payload.products);
+  }
+
   @Delete(':id')
   deleteOrder(@Param('id', MongoIdPipe) id: string) {
     return this.orderService.deleteOrder(id);
+  }
+
+  @Delete(':id/product/:productId')
+  removeProduct(
+    @Param('id', MongoIdPipe) id: string,
+    @Param('productId', MongoIdPipe) productId: string,
+  ) {
+    return this.orderService.removeProduct(id, productId);
   }
 }
