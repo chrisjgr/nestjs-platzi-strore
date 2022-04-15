@@ -5,9 +5,8 @@ import { Model } from 'mongoose';
 
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dtos/user.dto';
-import { Order } from '../entities/order.entity';
 
-import { ProductsService } from '../../products/services/products.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -23,10 +22,19 @@ export class UserService {
     return user;
   }
 
+  async findByEmail(email: string) {
+    return await this.userModel.findOne({ email });
+  }
+
   async createUser(user: CreateUserDto) {
     const newUser = new this.userModel(user);
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
+    const model = await newUser.save();
 
-    return await newUser.save();
+    const { password, ...userModel } = model.toJSON();
+
+    return userModel;
   }
 
   async updateUser(id, user: CreateUserDto) {

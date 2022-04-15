@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 
 import * as Joi from 'joi';
 import { firstValueFrom } from 'rxjs';
-import { MongoClient } from 'mongodb';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -25,7 +24,7 @@ import config from './config';
       load: [config], // archivos de configuracion
       isGlobal: true, // acceso de la configuracion global
       validationSchema: Joi.object({
-        API_KEY: Joi.number().required(),
+        API_KEY: Joi.string().required(),
         DATABASE_NAME: Joi.string().required(),
         DATABASE_PORT: Joi.number().required(),
       }),
