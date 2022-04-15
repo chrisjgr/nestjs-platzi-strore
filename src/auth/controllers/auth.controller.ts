@@ -14,7 +14,7 @@ import { SanitizeMongooseModelInterceptor } from 'nestjs-mongoose-exclude';
     excludeMongooseId: false,
     excludeMongooseV: true,
   }),
-)
+) // Decorator que no me devuelve la contraseña
 @Controller('auth')
 export class AuthController {
   @UseGuards(AuthGuard('local'))
