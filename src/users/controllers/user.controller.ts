@@ -6,15 +6,23 @@ import {
   Param,
   Delete,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dtos/user.dto';
 import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import { ApiTags } from '@nestjs/swagger';
+import { SanitizeMongooseModelInterceptor } from 'nestjs-mongoose-exclude';
 
 @ApiTags('users')
 @Controller('users')
+@UseInterceptors(
+  new SanitizeMongooseModelInterceptor({
+    excludeMongooseId: false,
+    excludeMongooseV: true,
+  }),
+)
 export class UserController {
   constructor(private userService: UserService) {}
 

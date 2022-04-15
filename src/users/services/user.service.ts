@@ -34,7 +34,7 @@ export class UserService {
 
     const { password, ...userModel } = model.toJSON();
 
-    return userModel;
+    return newUser;
   }
 
   async updateUser(id, user: CreateUserDto) {
