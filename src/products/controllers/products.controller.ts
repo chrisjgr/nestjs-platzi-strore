@@ -27,18 +27,21 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { PayloadToken } from 'src/auth/models/toke.model';
 
 @ApiTags('products')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard) // Guard para validar el token y decodificarlo.
 @Controller('products')
 export class ProductsController {
+  /* Cada vez que se ejecute un servicio enviara en los Request del mismo el token decodificado */
+
   constructor(private productsService: ProductsService) {}
 
   @Get()
   @ApiOperation({ summary: 'List of products' })
   getProducts(@Req() req: Request, @Query() params: FilterProductsDTO) {
-    console.log(req.user);
-
+    const user = req.user as PayloadToken; // Siempre vendra el token decodificado.
+    console.log(user);
     return this.productsService.findAll(params);
   }
 

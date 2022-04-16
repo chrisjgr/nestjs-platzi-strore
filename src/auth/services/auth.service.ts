@@ -27,6 +27,7 @@ export class AuthService {
     return null;
   }
 
+  /* Esto debe ser un metodo private dentro de la funcio de validate user */
   generateJWT(user: User) {
     const payload: PayloadToken = { role: user.role, sub: user._id };
     return {
