@@ -24,10 +24,11 @@ import {
   FilterProductsDTO,
   UpdateProductDto,
 } from '../dtos/products.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { PayloadToken } from 'src/auth/models/toke.model';
+import { Public } from '../../auth/decorators/public.decorator';
 
 @ApiTags('products')
 @UseGuards(JwtAuthGuard) // Guard para validar el token y decodificarlo.
@@ -39,6 +40,7 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'List of products' })
+  @Public()
   getProducts(@Req() req: Request, @Query() params: FilterProductsDTO) {
     const user = req.user as PayloadToken; // Siempre vendra el token decodificado.
     console.log(user);
@@ -46,12 +48,14 @@ export class ProductsController {
   }
 
   @Get('filter')
+  @Public()
   getProductsFiler() {
     return 'Yo soy un filtro';
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.ACCEPTED)
+  @Public()
   getProduct(@Param('id', MongoIdPipe) id: string) {
     return this.productsService.findOne(id);
   }
