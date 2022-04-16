@@ -10,6 +10,7 @@ import {
   HttpStatus,
   HttpCode,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -22,8 +23,10 @@ import {
   FilterProductsDTO,
   UpdateProductDto,
 } from '../dtos/products.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('products')
+@UseGuards(AuthGuard('jwt'))
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}

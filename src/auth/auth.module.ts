@@ -8,10 +8,11 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthService } from './services/auth.service';
 import { LocalStrategy } from './strategies/local.strategie';
 import { AuthController } from './controllers/auth.controller';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import config from 'src/config';
 
 @Module({
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
   imports: [
     UsersModule,
     PassportModule,
