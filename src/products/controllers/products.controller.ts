@@ -11,6 +11,7 @@ import {
   HttpCode,
   Res,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -24,16 +25,20 @@ import {
   UpdateProductDto,
 } from '../dtos/products.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 
 @ApiTags('products')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
   @Get()
   @ApiOperation({ summary: 'List of products' })
-  getProducts(@Query() params: FilterProductsDTO) {
+  getProducts(@Req() req: Request, @Query() params: FilterProductsDTO) {
+    console.log(req.user);
+
     return this.productsService.findAll(params);
   }
 
