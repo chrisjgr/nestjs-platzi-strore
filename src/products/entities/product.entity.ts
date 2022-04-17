@@ -25,10 +25,10 @@ export class Product extends Document {
       image: { type: String },
     }),
   )
-  category: Record<string, any>;
+  category: Record<string, any>; // relacion 1:1 embebida
 
   @Prop({ type: Types.ObjectId, ref: Brand.name })
-  brand: Brand | Types.ObjectId;
+  brand: Brand | Types.ObjectId; // relacion 1:1 referenciada
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

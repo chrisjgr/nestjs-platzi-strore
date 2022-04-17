@@ -9,7 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
-import { CreateUserDto } from '../dtos/user.dto';
+import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import { ApiTags } from '@nestjs/swagger';
@@ -44,7 +44,7 @@ export class UserController {
   @Put(':id')
   updateUser(
     @Param('id', MongoIdPipe) id: string,
-    @Body() payload: CreateUserDto,
+    @Body() payload: UpdateUserDto,
   ) {
     return this.userService.updateUser(id, payload);
   }

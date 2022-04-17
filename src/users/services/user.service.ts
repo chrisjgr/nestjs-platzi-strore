@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { User } from '../entities/user.entity';
-import { CreateUserDto } from '../dtos/user.dto';
+import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 
 import * as bcrypt from 'bcrypt';
 
@@ -13,7 +13,7 @@ export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async getUser(id) {
-    const user = await this.userModel.findById(id);
+    const user = await this.userModel.findById(id).populate('customer').exec();
 
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
@@ -37,11 +37,10 @@ export class UserService {
     return newUser;
   }
 
-  async updateUser(id, user: CreateUserDto) {
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      { $set: user },
-      { new: true },
-    );
+  async updateUser(id: string, user: UpdateUserDto) {
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(id, { $set: user }, { new: true })
+      .exec();
 
     if (!updatedUser) {
       throw new NotFoundException(`User with id ${id} not found`);
