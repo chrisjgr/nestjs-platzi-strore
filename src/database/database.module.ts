@@ -48,7 +48,6 @@ const API_KEY_PROD = 'xyz';
           configService.mongo;
 
         const uri = `${connection}://${user}:${password}@${host}:${port}`;
-        console.log(uri);
 
         const client = new MongoClient(uri);
         await client.connect();

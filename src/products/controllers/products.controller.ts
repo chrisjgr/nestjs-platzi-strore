@@ -29,9 +29,12 @@ import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { PayloadToken } from 'src/auth/models/toke.model';
 import { Public } from '../../auth/decorators/public.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from 'src/auth/models/roles.model';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('products')
-@UseGuards(JwtAuthGuard) // Guard para validar el token y decodificarlo.
+@UseGuards(JwtAuthGuard, RolesGuard) // Guard para validar el token y decodificarlo. y Validacion de roles.
 @Controller('products')
 export class ProductsController {
   /* Cada vez que se ejecute un servicio enviara en los Request del mismo el token decodificado */
@@ -61,11 +64,15 @@ export class ProductsController {
   }
 
   @Post()
-  createProduct(@Body() payload: CreateProductDto) {
+  @Roles(Role.ADMIN)
+  createProduct(@Req() req: Request, @Body() payload: CreateProductDto) {
+    console.log(req.user);
+
     return this.productsService.createProduct(payload);
   }
 
   @Put(':id')
+  @Roles(Role.ADMIN)
   updateProduct(
     @Param('id', MongoIdPipe) id: string,
     @Body() payload: UpdateProductDto,
@@ -74,6 +81,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   deleteProduct(@Param('id', MongoIdPipe) id: string) {
     return this.productsService.deleteProduct(id);
   }
