@@ -9,10 +9,14 @@ import { Model } from 'mongoose';
 
 import { Order } from '../../users/entities/order.entity';
 import { CreateOrderDto } from '../../users/dtos/orders.dto';
+import { UserService } from './user.service';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<Order>) {}
+  constructor(
+    @InjectModel(Order.name) private orderModel: Model<Order>,
+    private userService: UserService,
+  ) {}
 
   async getOrders() {
     return await this.orderModel
@@ -34,6 +38,17 @@ export class OrdersService {
     }
 
     return order;
+  }
+
+  async ordersByCustomer(userId: string) {
+    const user = await (await this.userService.getUser(userId)).toJSON();
+
+    /* TODO: Validations.... */
+
+    return await this.orderModel
+      .find({ customer: user.customer._id.toString() })
+      .populate('products')
+      .exec();
   }
 
   async createOrder(order: CreateOrderDto) {
