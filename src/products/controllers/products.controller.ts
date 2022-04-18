@@ -10,62 +10,79 @@ import {
   HttpStatus,
   HttpCode,
   Res,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
-import { ParseIntPipe } from 'src/commom/parse-int.pipe';
+import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 
 import { ProductsService } from '../services/products.service';
-import { CreateProductDto, UpdateProductDto } from '../dtos/products.dto';
+import {
+  CreateProductDto,
+  FilterProductsDTO,
+  UpdateProductDto,
+} from '../dtos/products.dto';
+import { Request } from 'express';
+
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { PayloadToken } from 'src/auth/models/toke.model';
+import { Public } from '../../auth/decorators/public.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from 'src/auth/models/roles.model';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('products')
+@UseGuards(JwtAuthGuard, RolesGuard) // Guard para validar el token y decodificarlo. y Validacion de roles.
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {
-    console.log('ProductsController');
-  }
+  /* Cada vez que se ejecute un servicio enviara en los Request del mismo el token decodificado */
+
+  constructor(private productsService: ProductsService) {}
 
   @Get()
   @ApiOperation({ summary: 'List of products' })
-  getProducts(
-    @Query('limit') limit = 100,
-    @Query('offset') offset = 0,
-    @Query('brand') brand: string,
-  ) {
-    return this.productsService.findAll();
+  @Public()
+  getProducts(@Req() req: Request, @Query() params: FilterProductsDTO) {
+    const user = req.user as PayloadToken; // Siempre vendra el token decodificado.
+    console.log(user);
+    return this.productsService.findAll(params);
   }
 
   @Get('filter')
+  @Public()
   getProductsFiler() {
     return 'Yo soy un filtro';
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.ACCEPTED)
-  getProduct(@Param('id', ParseIntPipe) id: number) {
-    /*   response.status(200).send({
-      message: `product ${id}`,
-    }); */
-
+  @Public()
+  getProduct(@Param('id', MongoIdPipe) id: string) {
     return this.productsService.findOne(id);
   }
 
   @Post()
-  createProduct(@Body() payload: CreateProductDto) {
+  @Roles(Role.ADMIN)
+  createProduct(@Req() req: Request, @Body() payload: CreateProductDto) {
+    console.log(req.user);
+
     return this.productsService.createProduct(payload);
   }
 
   @Put(':id')
+  @Roles(Role.ADMIN)
   updateProduct(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', MongoIdPipe) id: string,
     @Body() payload: UpdateProductDto,
   ) {
     return this.productsService.updateProduct(id, payload);
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id', ParseIntPipe) id: number) {
+  @Roles(Role.ADMIN)
+  deleteProduct(@Param('id', MongoIdPipe) id: string) {
     return this.productsService.deleteProduct(id);
   }
 }

@@ -1,8 +1,20 @@
-import { User } from './user.entity';
-import { Product } from '../../products/entities/product.entity';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export class Order {
+import { Document, Types } from 'mongoose';
+
+import { Product } from 'src/products/entities/product.entity';
+import { Customer } from './customer.entity';
+
+@Schema()
+export class Order extends Document {
+  @Prop({ required: true })
   date: Date;
-  user: User;
-  products: Product[];
+
+  @Prop({ type: Types.ObjectId, ref: Customer.name, required: true })
+  customer: Customer | Types.ObjectId;
+
+  @Prop({ required: true, type: [{ type: Types.ObjectId, ref: Product.name }] })
+  products: Types.Array<Product>; // 1:N reference relation
 }
+
+export const OrderSchema = SchemaFactory.createForClass(Order);

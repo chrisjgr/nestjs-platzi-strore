@@ -1,11 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString, IsDateString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-export class CreateBandDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  readonly id: number;
-
+import { ApiProperty, PartialType } from '@nestjs/swagger';
+export class CreateBrandDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -20,14 +15,6 @@ export class CreateBandDto {
   @IsNotEmpty()
   @IsString()
   readonly image: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsDateString()
-  readonly createdAt: Date;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsDateString()
-  readonly updatedAt: Date;
 }
+
+export class UpdateBrandDto extends PartialType(CreateBrandDto) {}
