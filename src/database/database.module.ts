@@ -22,11 +22,11 @@ const API_KEY_PROD = 'xyz';
     /* Mongoose de manera asincrona */
     MongooseModule.forRootAsync({
       useFactory: async (configService: ConfigType<typeof config>) => {
-        const { connection, host, port, dbName, user, password } =
+        const { connection, host, dbName, user, password } =
           configService.mongo;
 
         return {
-          uri: `${connection}://${host}:${port}`,
+          uri: `${connection}://${host}`,
           user: user,
           pass: password,
           dbName: dbName,
@@ -44,10 +44,10 @@ const API_KEY_PROD = 'xyz';
     {
       provide: 'MONGO',
       useFactory: async (configService: ConfigType<typeof config>) => {
-        const { connection, host, port, dbName, user, password } =
+        const { connection, host, dbName, user, password } =
           configService.mongo;
 
-        const uri = `${connection}://${user}:${password}@${host}:${port}`;
+        const uri = `${connection}://${user}:${password}@${host}`; // el Pueste debe estar en el host
 
         const client = new MongoClient(uri);
         await client.connect();

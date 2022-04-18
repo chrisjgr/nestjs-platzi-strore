@@ -8,8 +8,8 @@ export default registerAs('config', () => {
     },
     mongo: {
       dbName: process.env.MONGO_DB,
-      port: parseInt(process.env.MONGO_PORT, 10),
-      host: process.env.MONGO_HOST,
+      // port: parseInt(process.env.MONGO_PORT, 10), debe estar incluido en el host
+      host: process.env.MONGO_HOST, // host + port
       connection: process.env.MONGO_CONNECTION,
       user: process.env.MONGO_INITDB_ROOT_USERNAME,
       password: process.env.MONGO_INITDB_ROOT_PASSWORD,
