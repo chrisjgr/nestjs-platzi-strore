@@ -17,7 +17,8 @@ const API_KEY_PROD = 'xyz';
       user: 'root',
       pass: 'root',
       dbName: 'platzi-store',
-    }), */
+    }), 
+    */
 
     /* Mongoose de manera asincrona */
     MongooseModule.forRootAsync({
